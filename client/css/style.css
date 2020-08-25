@@ -1,0 +1,28 @@
+#app {
+    position: absolute;
+    top: 30%;
+    bottom: 30%;
+    width: 100%;
+    padding-left: 5rem;
+    padding-right: 5rem;
+}
+
+#app-name {
+    text-align: center;
+}
+
+#insert-link {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 500px;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#result {
+    text-align: center;
+}
+
+[v-cloak] {
+    display: none;
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link shorter</title>
+    <link rel="stylesheet" href="css/materialize.min.css">
+    <script src="js/materialize.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="/favicon.ico"/>
+
+    <script type="module" src="js/client.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1 id="app-name">Link shorter</h1>
+        <form id="insert-link" @submit.prevent="getLink">
+            <div class="input-field col s6">
+                <input id="shorten-link" name="shortLink" type="url" class="validate" v-model="longLink">
+                <label for="shorten-link">URL to shorten</label>
+            </div>
+            <button id="get-short" type="submit" class="btn green">Get short link</button>
+        </form>
+        <div id="result" v-cloak v-if="linkReceived">
+            <a v-bind:href="shortLink" target="_blank">{{shortLink}}</a>
+        </div>
+    </div>
+</body>
+</html>
