@@ -16,13 +16,14 @@
         <h1 id="app-name">Link shorter</h1>
         <form id="insert-link" @submit.prevent="getLink">
             <div class="input-field col s6">
-                <input id="shorten-link" name="shortLink" type="url" class="validate" v-model="longLink">
+                <input id="shorten-link" name="shortLink" type="url" class="validate" v-model="originalLink">
                 <label for="shorten-link">URL to shorten</label>
             </div>
             <button id="get-short" type="submit" class="btn green">Get short link</button>
         </form>
-        <div id="result" v-cloak v-if="linkReceived">
-            <a v-bind:href="shortLink" target="_blank">{{shortLink}}</a>
+        <div id="result" v-cloak>
+            <a v-if="linkReceived && !linkLoading" v-bind:href="shortLink" target="_blank">{{shortLink}}</a>
+            <loader v-if="linkLoading"/>
         </div>
     </div>
 </body>

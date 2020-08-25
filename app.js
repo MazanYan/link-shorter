@@ -4,13 +4,14 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Link = require('./models/link');
+const shortLink = require('./shortLink');
 require('dotenv').config();
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWD}@${process.env.CLUSTER_NAME}/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 const jsonParser = bodyParser.json();
 const app = express();
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.static(path.resolve(__dirname, 'client')))
 app.use(favicon(path.resolve(__dirname, 'public', 'favicon', 'favicon.ico')));
@@ -29,18 +30,30 @@ app.get('/get_link', (req, res) => {
 });
 
 app.post('/get_link', async (req, res) => {
-    //const originalLink = req.body.link;
-    const link = new Link({
-        originalLink: req.body.link,
-        shortLink: 'www.example.com'
-    });
-    await link.save();
-    res.send({ shortLink: 'http://localhost:3000/l/111' });
+    const originalLink = req.body.link;
+    let link = (await Link.find({ originalLink }).exec())[0];
+    if (!link) {
+        link = new Link({
+            originalLink: originalLink,
+            shortLink: shortLink(originalLink),
+        });
+        console.log('New Link was created');
+        link.save();
+    }
+    const links = { shortLink: `${process.env.SERVER_ADDR}/l/${link.shortLink}`, originalLink: originalLink };
+    console.log(links);
+    res.send(JSON.stringify(links));
 });
 
-app.get('/l/:link', (req, res) => {
-    console.log(req.params.link);
-    res.redirect('http://www.example.com');
+app.get('/l/:link', async (req, res) => {
+    const shortLink = req.params.link;
+    const originalLink = (await Link.find({ shortLink: shortLink }).exec())[0].originalLink;
+    console.log('Original Link');
+    console.log(originalLink);
+    if (!originalLink)
+        res.status(404).send('Original link for short link not found');
+    else
+        res.redirect(originalLink);
 });
 
 app.listen(port, async () => {
