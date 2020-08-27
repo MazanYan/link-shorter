@@ -13,7 +13,7 @@ const jsonParser = bodyParser.json();
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.static(path.resolve(__dirname, 'client')))
+app.use(express.static(path.resolve(__dirname, 'client')));
 app.use(favicon(path.resolve(__dirname, 'public', 'favicon', 'favicon.ico')));
 app.use(jsonParser);
 
@@ -47,13 +47,13 @@ app.post('/get_link', async (req, res) => {
 
 app.get('/l/:link', async (req, res) => {
     const shortLink = req.params.link;
-    const originalLink = (await Link.find({ shortLink: shortLink }).exec())[0].originalLink;
+    const originalLink = await Link.find({ shortLink: shortLink }).exec();
     console.log('Original Link');
     console.log(originalLink);
-    if (!originalLink)
-        res.status(404).send('Original link for short link not found');
+    if (!originalLink.length)
+        res.status(404).sendFile(path.resolve(__dirname, 'client', 'notFound.html'));
     else
-        res.redirect(originalLink);
+        res.redirect(originalLink[0].originalLink);
 });
 
 app.listen(port, async () => {
